@@ -81,16 +81,7 @@ begin
   for I := 1 to N  do
     Writeln(Text[I]);
 end;
-procedure PrintSentence(Str:String);
-var I : Integer;
-begin
-  for I := 1 to Length(Str) do
-  begin
-    Write(Str[I]);
-    if (I mod ScreenWidth) and (Str[I] = ' ') then
-      Writeln;
-  end;
-end;
+
 //* ---------------------- Пункты меню ---------------------- *//
 
 // Процедуры преобразования римских цифр в арабские (десятичные)
@@ -180,9 +171,9 @@ begin
         if Sentence <> '' then
         begin
           ProcessWords(Sentence, Alphabet, findMaxWord);
-          PrintSentence(Concat('"', Trim(Sentence),'".', ' == "',
+          Writeln('"', Trim(Sentence),'".', ' == "',
            MaxWord,'" ', IntToStr(Max),' раз',
-          IfThen((Max > 1)and(Max<5),'а',''),'.'));
+          IfThen((Max > 1)and(Max<5),'а',''),'.');
         end;
         MaxWord  := '';
         Max      := 0;
@@ -250,3 +241,16 @@ begin
       end;
    end;
 end.
+
+procedure PrintSentence(Str:String);
+var I : Integer;
+    Flag : Boolean;
+begin
+  for I := 1 to Length(Str) do
+  begin
+    Flag := True;
+    if I mod ScreenWidth then
+    
+    Write(Str[I]);
+  end;
+end;

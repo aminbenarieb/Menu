@@ -10,7 +10,6 @@ const
   Rome     = ['I','V','X', 'L', 'C', 'D', 'M'];
   Signs    = ['?', '.', '!'];
   N = 7;
-  ScreenWidth = 70;
 
 type
   TSet       = TSysCharSet;
@@ -19,13 +18,13 @@ type
 
 var
   BText: TText =
-  ('«ВКонтакте» — социальная сеть, крупнейшая в Европе. Проект запущен X ',
-   'октября MMVI года. По данным на январь MMXIV года ежедневная аудитория ',
-   '«ВКонтакте» — около LX миллионов человек, а ежемесячная более CCCXIV млн ',
-   'посетителей. Сегодня «ВКонтакте» II по популярности сайт в России, ',
-   'Белоруссии и Казахстане, III—ий на территории Украины, XXIII-й — в мире. ',
-   'Оборот компании составляет около IV млрд рублей, а чистая прибыль ',
-   'CXXXVII млн рублей по данным РСБУ на MMXIII год.');
+('«ВКонтакте» — социальная сеть, крупнейшая в Европе. Проект запущен X ',
+ 'октября MMVI года. По данным на январь MMXIV года ежедневная аудитория ',
+ '«ВКонтакте» — около LX миллионов человек, а емесячная более CCCXIV млн ',
+ 'посетителей. Сегодня «ВКонтакте» II по популярности сайт в России, ',
+ 'Белоруссии и Казахстане, III— на территории Украины, XXIII-й — в мире. ',
+ 'Оборот компании составляет около IV млрд рублей, а чистая прибыль ',
+ 'CXXXVII млн рублей по данным РСБУ на MMXIII год.');
   Max, Count : Integer;
   MaxWord, CWord : String;
   Input : Char;
@@ -81,16 +80,7 @@ begin
   for I := 1 to N  do
     Writeln(Text[I]);
 end;
-procedure PrintSentence(Str:String);
-var I : Integer;
-begin
-  for I := 1 to Length(Str) do
-  begin
-    Write(Str[I]);
-    if (I mod ScreenWidth) and (Str[I] = ' ') then
-      Writeln;
-  end;
-end;
+
 //* ---------------------- Пункты меню ---------------------- *//
 
 // Процедуры преобразования римских цифр в арабские (десятичные)
@@ -139,8 +129,9 @@ begin
     I := 1;
     ProcessWords(cText[Q], Rome,ReplaceRomeForArabic);
   end;
+  printText(bText);
+  Writeln;
   printText(cText);
-  Writeln(#10);
 end;
 
 // Процедуры и фукнции для поиска наиболее встечающегося слова в тексте
@@ -148,16 +139,19 @@ procedure IncIfEqualToWord(var Str:String; W:String);
 begin
   if CWord = W then Inc(Count);
 end;
-function  getFrequencyOfWord(Str:string; W : String):Integer;
+function  getFrequencyOfWord(W : String):Integer;
+var
+  Q : Integer;
 begin
   Count := 0;
   CWord := W;
-  ProcessWords(Str, Alphabet, IncIfEqualToWord);
+  for Q := 1 to N do
+    ProcessWords(bText[Q], Alphabet, IncIfEqualToWord);
   Result := Count;
 end;
 procedure findMaxWord (var Str:String; Word:String);
 begin
-   Count :=  getFrequencyOfWord(Str, Word);
+   Count :=  getFrequencyOfWord(Word);
    if Count > Max then
    begin
      Max := Count;
@@ -166,29 +160,16 @@ begin
 end;
 procedure ProcessFrequency;
 var
-  Q, S: Integer;
-  Sentence : String;
+  Q : Integer;
 begin
-  Writeln(#10, 'Список предожений с самым встречающимся словом в каждом: ');
   Max := 0;
+  Count := 0;
   for Q := 1 to N do
-    for S:=1 to Length(bText[Q]) do
-      if not (bText[Q][S] in Signs)  then
-        Sentence := Sentence + bText[Q][S]
-      else
-      begin
-        if Sentence <> '' then
-        begin
-          ProcessWords(Sentence, Alphabet, findMaxWord);
-          PrintSentence(Concat('"', Trim(Sentence),'".', ' == "',
-           MaxWord,'" ', IntToStr(Max),' раз',
-          IfThen((Max > 1)and(Max<5),'а',''),'.'));
-        end;
-        MaxWord  := '';
-        Max      := 0;
-        Sentence := '';
-      end;
-  Writeln(#10);
+    ProcessWords(bText[Q], Alphabet, findMaxWord);
+  printText(bText);
+  Writeln('Наиболее часто встречающиеся слово: "', MaxWord,
+          '". Аж ', Max,' раз', IfThen((Max > 1)and(Max<5),'а',''),'!');
+  Writeln;
 end;
 
 // Процедуры поиска предложения с наибольшим количеством палендромов
@@ -209,7 +190,7 @@ begin
     for S:=1 to Length(bText[Q]) do
     begin
       Count := 0;
-      if not (bText[Q][S] in Signs)  then
+      if not ((bText[Q][S] in Signs) and  (bText[Q][S+1] = ' '))  then
         Sentence := Sentence + bText[Q][S]
       else
       begin
@@ -224,8 +205,10 @@ begin
       end;
     end;
   end;
+  Writeln;
+  printText(bText);
   Writeln(#10, 'Предложение с наибольшем количеством слов палендромов:', #10,
-           '"',Trim(MaxSentence),'"', #10, #10);
+           '"',Trim(MaxSentence),'"', #10);
 end;
 
 begin
@@ -239,9 +222,6 @@ begin
      Writeln(' 4 - очистить экран');
      Writeln(' 5 - выйти');
      Readln(Input);
-     Writeln(#10);
-     printText(bText);
-     Writeln;
      case Input of
        '1' : ProcessFrequency;
        '2' : ProcessRome(BText);

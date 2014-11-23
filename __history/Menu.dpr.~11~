@@ -10,7 +10,6 @@ const
   Rome     = ['I','V','X', 'L', 'C', 'D', 'M'];
   Signs    = ['?', '.', '!'];
   N = 7;
-  ScreenWidth = 70;
 
 type
   TSet       = TSysCharSet;
@@ -21,7 +20,7 @@ var
   BText: TText =
   ('«ВКонтакте» — социальная сеть, крупнейшая в Европе. Проект запущен X ',
    'октября MMVI года. По данным на январь MMXIV года ежедневная аудитория ',
-   '«ВКонтакте» — около LX миллионов человек, а ежемесячная более CCCXIV млн ',
+   '«ВКонтакте» — около LX миллионов человек, а емесячная более CCCXIV млн ',
    'посетителей. Сегодня «ВКонтакте» II по популярности сайт в России, ',
    'Белоруссии и Казахстане, III—ий на территории Украины, XXIII-й — в мире. ',
    'Оборот компании составляет около IV млрд рублей, а чистая прибыль ',
@@ -81,16 +80,14 @@ begin
   for I := 1 to N  do
     Writeln(Text[I]);
 end;
-procedure PrintSentence(Str:String);
-var I : Integer;
+procedure PrintSentence(Str : String);
+var
+  I : Integer;
 begin
   for I := 1 to Length(Str) do
-  begin
-    Write(Str[I]);
-    if (I mod ScreenWidth) and (Str[I] = ' ') then
-      Writeln;
-  end;
+    Write(Str[I], IfThen((I mod 80) = 0, #10, ''));
 end;
+
 //* ---------------------- Пункты меню ---------------------- *//
 
 // Процедуры преобразования римских цифр в арабские (десятичные)
@@ -180,8 +177,7 @@ begin
         if Sentence <> '' then
         begin
           ProcessWords(Sentence, Alphabet, findMaxWord);
-          PrintSentence(Concat('"', Trim(Sentence),'".', ' == "',
-           MaxWord,'" ', IntToStr(Max),' раз',
+          PrintSentence(Concat('"', Trim(Sentence),'".', ' == "', MaxWord,'" ', Max,' раз',
           IfThen((Max > 1)and(Max<5),'а',''),'.'));
         end;
         MaxWord  := '';
