@@ -10,7 +10,7 @@ const
   Rome     = ['I','V','X', 'L', 'C', 'D', 'M'];
   Signs    = ['?', '.', '!'];
   N = 7;
-  ScreenWidth = 70;
+  ScreenWidth = 80;
 
 type
   TSet       = TSysCharSet;
@@ -83,12 +83,19 @@ begin
 end;
 procedure PrintSentence(Str:String);
 var I : Integer;
+    Flag : Boolean;
 begin
+  Flag := False;
   for I := 1 to Length(Str) do
   begin
     Write(Str[I]);
-    if (I mod ScreenWidth) and (Str[I] = ' ') then
+    if (I mod ScreenWidth = 0) then
+      Flag := True;
+    if Flag and (Str[I] = ' ') then
+    begin
       Writeln;
+      Flag := False;
+    end;
   end;
 end;
 //* ---------------------- Пункты меню ---------------------- *//
@@ -166,7 +173,7 @@ begin
 end;
 procedure ProcessFrequency;
 var
-  Q, S: Integer;
+  Q, S, K: Integer;
   Sentence : String;
 begin
   Writeln(#10, 'Список предожений с самым встречающимся словом в каждом: ');
@@ -179,10 +186,13 @@ begin
       begin
         if Sentence <> '' then
         begin
+          Inc(K);
           ProcessWords(Sentence, Alphabet, findMaxWord);
-          PrintSentence(Concat('"', Trim(Sentence),'".', ' == "',
-           MaxWord,'" ', IntToStr(Max),' раз',
-          IfThen((Max > 1)and(Max<5),'а',''),'.'));
+          PrintSentence(Concat(IntToStr(K),') "', Trim(Sentence),
+                        '".', ' == "',
+                        MaxWord,'" ', IntToStr(Max),' раз',
+                        IfThen((Max > 1)and(Max<5),'а',''),'.'));
+          Writeln(#10);
         end;
         MaxWord  := '';
         Max      := 0;
